@@ -1,0 +1,283 @@
+@model SmartEvent.Web.Models.Event
+
+@{
+    ViewData["Title"] = "Event Details";
+}
+
+<style>
+
+    body {
+        background: #f4f6fb;
+    }
+
+    /* Page Title */
+    .page-title {
+        font-weight: 700;
+        margin-bottom: 25px;
+    }
+
+    /* Card */
+    .details-card {
+        background: white;
+        border-radius: 14px;
+        padding: 30px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        transition: .3s;
+    }
+
+        .details-card:hover {
+            transform: translateY(-4px);
+        }
+
+    /* Label */
+    .detail-label {
+        font-weight: 600;
+        color: #6b7280;
+    }
+
+    /* Value */
+    .detail-value {
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    /* Status badge */
+    .status-badge {
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+    }
+
+    .active {
+        background: #16a34a;
+        color: white;
+    }
+
+    .pending {
+        background: #facc15;
+        color: black;
+    }
+
+    .cancelled {
+        background: #ef4444;
+        color: white;
+    }
+
+    /* Buttons */
+    .action-buttons {
+        margin-top: 20px;
+    }
+
+        .action-buttons a {
+            border-radius: 8px;
+            padding: 8px 16px;
+            text-decoration: none;
+            margin-right: 8px;
+            transition: .2s;
+        }
+
+    .btn-edit {
+        background: #6366f1;
+        color: white;
+    }
+
+        .btn-edit:hover {
+            box-shadow: 0 6px 16px rgba(99,102,241,.4);
+        }
+
+    .btn-back {
+        background: #6b7280;
+        color: white;
+    }
+
+        .btn-back:hover {
+            box-shadow: 0 6px 16px rgba(107,114,128,.4);
+        }
+
+</style>
+
+
+
+<h2 class="page-title">Event Details</h2>
+
+<div class="row">
+
+    <div class="col-md-7">
+
+        <div class="details-card">
+
+            <div class="row mb-3">
+
+                <div class="col-4 detail-label">
+                    Title
+                </div>
+
+                <div class="col-8 detail-value">
+                    @Model.Title
+                </div>
+
+            </div>
+
+
+
+            <div class="row mb-3">
+
+                <div class="col-4 detail-label">
+                    Event Date
+                </div>
+
+                <div class="col-8 detail-value">
+                    @Model.EventDate.ToString("dd MMM yyyy HH:mm")
+                </div>
+
+            </div>
+
+
+
+            <div class="row mb-3">
+
+                <div class="col-4 detail-label">
+                    Venue
+                </div>
+
+                <div class="col-8 detail-value">
+                    @Model.Venue
+                </div>
+
+            </div>
+
+
+
+            <div class="row mb-3">
+
+                <div class="col-4 detail-label">
+                    Capacity
+                </div>
+
+                <div class="col-8 detail-value">
+                    @Model.Capacity
+                </div>
+
+            </div>
+
+
+
+            <div class="row mb-3">
+
+                <div class="col-4 detail-label">
+                    Ticket Price
+                </div>
+
+                <div class="col-8 detail-value">
+                    ₹@Model.Price
+                </div>
+
+            </div>
+
+
+
+            <div class="row mb-3">
+
+                <div class="col-4 detail-label">
+                    Status
+                </div>
+
+                <div class="col-8">
+
+                    @if (Model.Status == "Active")
+                    {
+                        <span class="status-badge active">Active</span>
+                    }
+
+                    @if (Model.Status == "Pending")
+                    {
+                        <span class="status-badge pending">Pending</span>
+                    }
+
+                    @if (Model.Status == "Cancelled")
+                    {
+                        <span class="status-badge cancelled">Cancelled</span>
+                    }
+
+                </div>
+
+            </div>
+
+
+
+            <div class="action-buttons">
+
+                <a asp-action="Edit"
+                   asp-route-id="@Model.EventId"
+                   class="btn-edit">
+                    Edit
+                </a>
+
+                <a asp-action="Index"
+                   class="btn-back">
+                    Back to List
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+@* @model SmartEvent.Web.Models.Event
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Event</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.EventDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.EventDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Venue)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Venue)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Capacity)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Capacity)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Status)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Status)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.EventId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div> *@

@@ -1,0 +1,331 @@
+﻿@model List<SmartEvent.Web.Models.BookingTicket>
+
+@{
+    ViewData["Title"] = "My Tickets";
+}
+
+<style>
+
+body{
+    background:#f4f6fb;
+}
+
+.page-title{
+    font-size:28px;
+    font-weight:700;
+    margin-bottom:30px;
+}
+
+/* Ticket Layout */
+.ticket{
+    background:white;
+    border-radius:14px;
+    margin-bottom:25px;
+    display:flex;
+    overflow:hidden;
+    border:1px solid #e5e7eb;
+    box-shadow:0 10px 25px rgba(0,0,0,0.08);
+    transition:.25s;
+}
+
+.ticket:hover{
+    transform:translateY(-4px);
+    box-shadow:0 18px 35px rgba(0,0,0,0.12);
+}
+
+/* Left Side Info */
+.ticket-left{
+    flex:1;
+    padding:25px;
+}
+
+.ticket-title{
+    font-size:22px;
+    font-weight:700;
+    margin-bottom:10px;
+}
+
+.ticket-meta{
+    color:#6b7280;
+    font-size:15px;
+    margin-bottom:6px;
+}
+
+.ticket-id{
+    margin-top:12px;
+    font-weight:600;
+}
+
+/* Status */
+.status-valid{
+    display:inline-block;
+    margin-top:8px;
+    background:#dcfce7;
+    color:#15803d;
+    padding:5px 10px;
+    border-radius:6px;
+    font-size:13px;
+    font-weight:600;
+}
+
+.status-used{
+    display:inline-block;
+    margin-top:8px;
+    background:#fee2e2;
+    color:#b91c1c;
+    padding:5px 10px;
+    border-radius:6px;
+    font-size:13px;
+    font-weight:600;
+}
+
+/* Divider */
+.ticket-divider{
+    width:2px;
+    border-left:2px dashed #d1d5db;
+}
+
+/* QR Section */
+.ticket-right{
+    width:220px;
+    text-align:center;
+    padding:25px;
+}
+
+.ticket-right img{
+    width:160px;
+}
+
+.ticket-actions{
+    margin-top:12px;
+}
+
+.ticket-actions button{
+    border-radius:6px;
+    padding:6px 14px;
+    font-size:13px;
+}
+
+</style>
+
+
+<h2 class="page-title">My Tickets</h2>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info">
+        No tickets found.
+    </div>
+}
+else
+{
+    foreach (var ticket in Model)
+    {
+        <div class="ticket">
+
+            <!-- Left Side -->
+            <div class="ticket-left">
+
+                <div class="ticket-title">
+                    @(ticket.Booking?.Event?.Title ?? "Unknown Event")
+                </div>
+
+                <div class="ticket-meta">
+                    📅 @(ticket.Booking?.Event?.EventDate.ToString("dd MMM yyyy") ?? "-")
+                </div>
+
+                <div class="ticket-meta">
+                    📍 @(ticket.Booking?.Event?.Venue ?? "-")
+                </div>
+
+                <div class="ticket-meta">
+                    <b>💰 ₹@(ticket.Booking?.Event?.Price)</b>
+                </div>
+
+                <div class="ticket-id">
+                    Ticket #@ticket.BookingTicketId
+                </div>
+
+                @if (ticket.IsUsed)
+                {
+                    <span class="status-used">Used</span>
+                }
+                else
+                {
+                    <span class="status-valid">Valid</span>
+                }
+
+            </div>
+
+
+            <div class="ticket-divider"></div>
+
+
+            <!-- QR Code -->
+            <div class="ticket-right">
+
+                @if (ViewBag.QRCodes != null &&
+                    ((Dictionary<int, string>)ViewBag.QRCodes).ContainsKey(ticket.BookingTicketId))
+                {
+                    <img src="data:image/png;base64,@ViewBag.QRCodes[ticket.BookingTicketId]" />
+                }
+
+                <div class="ticket-actions">
+
+                    @if (!ticket.IsUsed)
+                    {
+                        <form asp-action="CancelTicket" method="post">
+                            <input type="hidden" name="ticketId" value="@ticket.BookingTicketId" />
+
+                            <button type="submit"
+                                    class="btn btn-warning btn-sm"
+                                    onclick="return confirm('Cancel this ticket?');">
+                                Cancel Ticket
+                            </button>
+                        </form>
+                    }
+
+                    @if (ticket.IsUsed)
+                    {
+                        <form asp-action="Delete" method="post">
+                            <input type="hidden" name="bookingId" value="@ticket.BookingId" />
+
+                            <button class="btn btn-danger btn-sm">
+                                Delete
+                            </button>
+                        </form>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+}
+
+
+
+
+
+@* @model List<SmartEvent.Web.Models.BookingTicket>
+
+<h2 class="mb-4">My Tickets</h2>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info">
+        No tickets found.
+    </div>
+}
+else
+{
+    foreach (var ticket in Model)
+    {
+        <div class="card shadow-sm p-4 mb-4">
+
+            <div class="row">
+
+                <!-- Ticket Info -->
+                <div class="col-md-8">
+
+                    <h5 class="mb-3">
+                        Ticket ID: @ticket.BookingTicketId
+                    </h5>
+
+                    <p>
+                        <b>Event:</b>
+                        @(ticket.Booking?.Event?.Title ?? "Unknown Event")
+                    </p>
+
+                    <p>
+                        <b>Date:</b>
+                        @(ticket.Booking?.Event?.EventDate.ToString("dd MMM yyyy") ?? "-")
+                    </p>
+
+                    <p>
+                        <b>Venue:</b>
+                        @(ticket.Booking?.Event?.Venue ?? "-")
+                    </p>
+
+                   <p>
+                       <b>Price:</b>
+                       @(ticket.Booking?.Event?.Price)
+                   </p>
+
+                    <p>
+                        <b>Status:</b>
+
+                        @if (ticket.IsUsed)
+                        {
+                            <span class="badge bg-danger">Used</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Valid</span>
+                        }
+                    </p>
+
+                </div>
+
+
+                <!-- QR CODE -->
+                <div class="col-md-4 text-center">
+
+                    @if (ViewBag.QRCodes != null &&
+                                ((Dictionary<int, string>)ViewBag.QRCodes).ContainsKey(ticket.BookingTicketId))
+                    {
+                        <img src="data:image/png;base64,@ViewBag.QRCodes[ticket.BookingTicketId]"
+                             width="180"
+                             class="mb-3" />
+                    }
+
+                    <!-- Cancel Button -->
+                    @if (!ticket.IsUsed)
+                    {
+                        <form asp-action="CancelTicket" method="post">
+                            <input type="hidden" name="ticketId" value="@ticket.BookingTicketId" />
+
+                            <button type="submit"
+                                    class="btn btn-warning btn-sm"
+                                    onclick="return confirm('Cancel this ticket?');">
+                                Cancel Ticket
+                            </button>
+                        </form>
+                    }
+                    
+
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+} *@
+
+
+
+
+
+                    @* @if (ticket.IsUsed)
+                    {
+                        <form asp-action="Delete" method="post">
+                            <input type="hidden" name="bookingId" value="@ticket.BookingId" />
+                            <button class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    } *@

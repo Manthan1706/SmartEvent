@@ -1,0 +1,715 @@
+﻿@{
+    ViewData["Title"] = "Home";
+    bool isOrganizer = User.IsInRole("Organizer");
+}
+
+<style>
+
+    body {
+        background: #f4f6fb;
+    }
+
+    /* HERO */
+
+    .hero-section {
+        background: linear-gradient(135deg,#2563eb,#7c3aed);
+        border-radius: 18px;
+        padding: 90px 40px;
+        color: white;
+        text-align: center;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+    }
+
+    .hero-title {
+        font-size: 52px;
+        font-weight: 800;
+    }
+
+    .hero-sub {
+        font-size: 20px;
+        opacity: .9;
+    }
+
+    .hero-btn {
+        padding: 14px 30px;
+        border-radius: 10px;
+        font-weight: 600;
+    }
+
+    /* CARDS */
+
+    .quick-card {
+        border: none;
+        border-radius: 16px;
+        padding: 30px;
+        transition: .3s;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+    }
+
+        .quick-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+        }
+
+    .quick-icon {
+        font-size: 38px;
+        margin-bottom: 14px;
+        color: #2563eb;
+    }
+
+</style>
+
+
+<div class="container mt-4">
+
+    <!-- HERO -->
+
+    <div class="hero-section">
+
+        <h1 class="hero-title">
+            🎟 Smart Event System
+        </h1>
+
+        <p class="hero-sub">
+            Discover amazing events • Book tickets instantly • Fast QR Entry
+        </p>
+
+        <div class="mt-4">
+
+            @if (!User.Identity.IsAuthenticated)
+            {
+                <a class="btn btn-light hero-btn me-3"
+                   asp-area="Identity"
+                   asp-page="/Account/Login">
+                    Login
+                </a>
+
+                <a class="btn btn-outline-light hero-btn"
+                   asp-area="Identity"
+                   asp-page="/Account/Register">
+                    Register
+                </a>
+            }
+            else if (isOrganizer)
+            {
+                <a class="btn btn-warning hero-btn"
+                   asp-controller="Event"
+                   asp-action="Index">
+                    My Events
+                </a>
+            }
+            else
+            {
+                <a class="btn btn-warning hero-btn"
+                   asp-controller="EventBrowse"
+                   asp-action="Index">
+                    Browse Events
+                </a>
+            }
+
+        </div>
+
+    </div>
+
+
+    
+
+
+
+    <!-- QUICK ACTION CARDS -->
+
+    <div class="row text-center mt-5 g-4">
+
+        @if (User.Identity.IsAuthenticated && isOrganizer)
+        {
+            <!-- ORGANIZER DASHBOARD -->
+
+            <div class="col-md-4">
+
+                <div class="card quick-card">
+
+                    <div class="quick-icon">
+                        <i class="fa-solid fa-plus"></i>
+                    </div>
+
+                    <h5>Create Event</h5>
+
+                    <p class="text-muted">
+                        Create and publish your new event.
+                    </p>
+
+                    <a class="btn btn-primary"
+                       asp-controller="Event"
+                       asp-action="Create">
+                        Create Event
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="card quick-card">
+
+                    <div class="quick-icon">
+                        <i class="fa-solid fa-calendar"></i>
+                    </div>
+
+                    <h5>My Events</h5>
+
+                    <p class="text-muted">
+                        Manage your created events.
+                    </p>
+
+                    <a class="btn btn-success"
+                       asp-controller="Event"
+                       asp-action="Index">
+                        Manage Events
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="card quick-card">
+
+                    <div class="quick-icon">
+                        <i class="fa-solid fa-qrcode"></i>
+                    </div>
+
+                    <h5>QR Entry Scanner</h5>
+
+                    <p class="text-muted">
+                        Scan attendee tickets at entry gate.
+                    </p>
+
+                    <a class="btn btn-warning"
+                       asp-controller="Entry"
+                       asp-action="Index">
+                        Start Scanner
+                    </a>
+
+                </div>
+
+            </div>
+        }
+        else if (User.Identity.IsAuthenticated)
+        {
+            <!-- NORMAL USER DASHBOARD -->
+
+            <div class="col-md-4">
+
+                <div class="card quick-card">
+
+                    <div class="quick-icon">
+                        <i class="fa-solid fa-calendar-days"></i>
+                    </div>
+
+                    <h5>Explore Events</h5>
+
+                    <p class="text-muted">
+                        Find exciting events happening near you.
+                    </p>
+
+                    <a class="btn btn-primary"
+                       asp-controller="EventBrowse"
+                       asp-action="Index">
+                        Browse Events
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="card quick-card">
+
+                    <div class="quick-icon">
+                        <i class="fa-solid fa-ticket"></i>
+                    </div>
+
+                    <h5>My Bookings</h5>
+
+                    <p class="text-muted">
+                        Manage and track all your ticket bookings.
+                    </p>
+
+                    <a class="btn btn-success"
+                       asp-controller="Booking"
+                       asp-action="Index">
+                        View Bookings
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="card quick-card">
+
+                    <div class="quick-icon">
+                        <i class="fa-solid fa-qrcode"></i>
+                    </div>
+
+                    <h5>My Tickets</h5>
+
+                    <p class="text-muted">
+                        Access your QR tickets for quick event entry.
+                    </p>
+
+                    <a class="btn btn-warning"
+                       asp-controller="Booking"
+                       asp-action="MyTickets">
+                        View Tickets
+                    </a>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+
+    <!-- FEATURED EVENTS -->
+
+    <div class="mt-5">
+
+        <h3 class="featured-title text-center mb-4">
+            Featured Events
+        </h3>
+
+        <div id="eventCarousel" class="carousel slide" data-bs-ride="carousel">
+
+            <div class="carousel-inner">
+
+
+                <div class="carousel-item active">
+
+                    <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30"
+                         class="d-block w-100">
+
+                    <div class="carousel-caption">
+
+                        <h4>Music Festival</h4>
+                        <p>Experience unforgettable live performances</p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="carousel-item">
+
+                    <img src="https://images.unsplash.com/photo-1511578314322-379afb476865"
+                         class="d-block w-100">
+
+                    <div class="carousel-caption">
+
+                        <h4>Startup Conference</h4>
+                        <p>Meet innovators and entrepreneurs</p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="carousel-item">
+
+                    <img src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2"
+                         class="d-block w-100">
+
+                    <div class="carousel-caption">
+
+                        <h4>Tech Meetup</h4>
+                        <p>Networking and technology discussions</p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <button class="carousel-control-prev"
+                    type="button"
+                    data-bs-target="#eventCarousel"
+                    data-bs-slide="prev">
+
+                <span class="carousel-control-prev-icon"></span>
+
+            </button>
+
+
+            <button class="carousel-control-next"
+                    type="button"
+                    data-bs-target="#eventCarousel"
+                    data-bs-slide="next">
+
+                <span class="carousel-control-next-icon"></span>
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+@* @{
+    ViewData["Title"] = "Home";
+}
+
+<style>
+
+    body {
+        background: #f4f6fb;
+    }
+
+
+    /* HERO */
+
+    .hero-section {
+        background: linear-gradient(135deg,#2563eb,#7c3aed);
+        border-radius: 18px;
+        padding: 90px 40px;
+        color: white;
+        text-align: center;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+    }
+
+    .hero-title {
+        font-size: 52px;
+        font-weight: 800;
+        margin-bottom: 15px;
+    }
+
+    .hero-sub {
+        font-size: 20px;
+        opacity: .9;
+    }
+
+    .hero-btn {
+        padding: 14px 30px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 16px;
+    }
+
+
+    /* ACTION CARDS */
+
+    .quick-card {
+        border: none;
+        border-radius: 16px;
+        padding: 30px;
+        transition: .3s;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+    }
+
+        .quick-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+        }
+
+    .quick-icon {
+        font-size: 38px;
+        margin-bottom: 14px;
+        color: #2563eb;
+    }
+
+
+    /* FEATURED EVENTS */
+
+    .featured-title {
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .carousel-item img {
+        height: 360px;
+        object-fit: cover;
+        border-radius: 14px;
+    }
+
+    .carousel-caption {
+        background: rgba(0,0,0,.55);
+        border-radius: 10px;
+        padding: 15px;
+    }
+
+</style>
+
+
+
+<div class="container mt-4">
+
+
+    <!-- HERO -->
+
+    <div class="hero-section animate__animated animate__fadeInDown">
+
+        <h1 class="hero-title">
+            🎟 Smart Event System
+        </h1>
+
+        <p class="hero-sub">
+            Discover amazing events • Book tickets instantly • Fast QR Entry
+        </p>
+
+
+        <div class="mt-4">
+
+            @if (!User.Identity.IsAuthenticated)
+            {
+                <a class="btn btn-light hero-btn me-3"
+                   asp-area="Identity"
+                   asp-page="/Account/Login">
+
+                    Login
+
+                </a>
+
+                <a class="btn btn-outline-light hero-btn"
+                   asp-area="Identity"
+                   asp-page="/Account/Register">
+
+                    Register
+
+                </a>
+            }
+            else
+            {
+                <a class="btn btn-warning hero-btn"
+                   asp-controller="EventBrowse"
+                   asp-action="Index">
+
+                    Browse Events
+
+                </a>
+            }
+
+        </div>
+
+    </div>
+
+
+
+    <!-- QUICK ACCESS -->
+
+    <div class="row text-center mt-5 g-4">
+
+        <div class="col-md-4">
+
+            <div class="card quick-card">
+
+                <div class="quick-icon">
+                    <i class="fa-solid fa-calendar-days"></i>
+                </div>
+
+                <h5>Explore Events</h5>
+
+                <p class="text-muted">
+                    Find exciting events happening near you.
+                </p>
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a class="btn btn-primary"
+                       asp-controller="EventBrowse"
+                       asp-action="Index">
+                        Browse Events
+                    </a>
+                }
+                else
+                {
+                    <a class="btn btn-primary"
+                       asp-area="Identity"
+                       asp-page="/Account/Login">
+                        Login First
+                    </a>
+                }
+
+            </div>
+
+        </div>
+
+
+
+        <div class="col-md-4">
+
+            <div class="card quick-card">
+
+                <div class="quick-icon">
+                    <i class="fa-solid fa-ticket"></i>
+                </div>
+
+                <h5>My Bookings</h5>
+
+                <p class="text-muted">
+                    Manage and track all your ticket bookings.
+                </p>
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a class="btn btn-success"
+                       asp-controller="Booking"
+                       asp-action="Index">
+                        View Bookings
+                    </a>
+                }
+                else
+                {
+                    <a class="btn btn-success"
+                       asp-area="Identity"
+                       asp-page="/Account/Login">
+                        Login Required
+                    </a>
+                }
+
+            </div>
+
+        </div>
+
+
+
+        <div class="col-md-4">
+
+            <div class="card quick-card">
+
+                <div class="quick-icon">
+                    <i class="fa-solid fa-qrcode"></i>
+                </div>
+
+                <h5>My Tickets</h5>
+
+                <p class="text-muted">
+                    Access your QR tickets for quick event entry.
+                </p>
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a class="btn btn-warning"
+                       asp-controller="Booking"
+                       asp-action="MyTickets">
+                        View Tickets
+                    </a>
+                }
+                else
+                {
+                    <a class="btn btn-warning"
+                       asp-area="Identity"
+                       asp-page="/Account/Login">
+                        Login First
+                    </a>
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- FEATURED EVENTS -->
+
+    <div class="mt-5">
+
+        <h3 class="featured-title text-center mb-4">
+            Featured Events
+        </h3>
+
+        <div id="eventCarousel" class="carousel slide" data-bs-ride="carousel">
+
+            <div class="carousel-inner">
+
+
+                <div class="carousel-item active">
+
+                    <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30"
+                         class="d-block w-100">
+
+                    <div class="carousel-caption">
+
+                        <h4>Music Festival</h4>
+                        <p>Experience unforgettable live performances</p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="carousel-item">
+
+                    <img src="https://images.unsplash.com/photo-1511578314322-379afb476865"
+                         class="d-block w-100">
+
+                    <div class="carousel-caption">
+
+                        <h4>Startup Conference</h4>
+                        <p>Meet innovators and entrepreneurs</p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="carousel-item">
+
+                    <img src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2"
+                         class="d-block w-100">
+
+                    <div class="carousel-caption">
+
+                        <h4>Tech Meetup</h4>
+                        <p>Networking and technology discussions</p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <button class="carousel-control-prev"
+                    type="button"
+                    data-bs-target="#eventCarousel"
+                    data-bs-slide="prev">
+
+                <span class="carousel-control-prev-icon"></span>
+
+            </button>
+
+
+            <button class="carousel-control-next"
+                    type="button"
+                    data-bs-target="#eventCarousel"
+                    data-bs-slide="next">
+
+                <span class="carousel-control-next-icon"></span>
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div> *@

@@ -1,0 +1,295 @@
+﻿@model IEnumerable<SmartEvent.Web.Models.Event>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+@{
+    ViewData["Title"] = "Browse Events";
+}
+
+<style>
+
+    body {
+        background: #f4f6fb;
+    }
+
+    /* Page Title */
+    .page-title {
+        font-weight: 700;
+        font-size: 28px;
+        margin-bottom: 30px;
+    }
+
+    /* Grid Layout */
+    .event-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit,minmax(360px,1fr));
+        gap: 24px;
+    }
+
+    /* Event Card */
+    .event-card {
+        background: white;
+        border-radius: 14px;
+        padding: 22px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+        transition: .25s;
+    }
+
+        .event-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 28px rgba(0,0,0,0.10);
+        }
+
+    /* Title */
+    .event-title {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    /* Meta Info */
+    .event-meta {
+        font-size: 14px;
+        color: #6b7280;
+        margin-bottom: 4px;
+    }
+
+    /* Capacity */
+    .capacity {
+        font-size: 14px;
+        margin-top: 6px;
+        color: #6b7280;
+    }
+
+    /* Price */
+    .event-price {
+        font-size: 18px;
+        font-weight: 700;
+        color: #16a34a;
+        margin-top: 10px;
+    }
+
+    /* Buttons */
+    .event-actions {
+        margin-top: 18px;
+    }
+
+        .event-actions a {
+            padding: 7px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            margin-right: 8px;
+            transition: .2s;
+        }
+
+    /* Details */
+    .btn-details {
+        background: #0ea5e9;
+        color: white;
+    }
+
+        .btn-details:hover {
+            box-shadow: 0 5px 12px rgba(14,165,233,.35);
+        }
+
+    /* Book */
+    .btn-book {
+        background: #16a34a;
+        color: white;
+    }
+
+        .btn-book:hover {
+            box-shadow: 0 5px 12px rgba(22,163,74,.35);
+        }
+
+
+
+    /* HEADER LAYOUT */
+
+    .search-wrapper {
+        gap: 10px;
+    }
+
+    /* SEARCH INPUT */
+
+    .search-input {
+        width: 260px;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+        padding: 10px 12px;
+        transition: 0.2s;
+    }
+
+    /* DATE INPUT */
+
+    .date-input {
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+        padding: 10px;
+        width: 170px;
+    }
+
+        /* HOVER EFFECT */
+
+        .search-input:focus,
+        .date-input:focus {
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 2px rgba(14,165,233,.15);
+        }
+
+</style>
+
+
+@* <h2 class="page-title">Browse Events</h2>
+
+
+<!-- SEARCH + FILTER -->
+
+<div class="search-bar">
+
+    <input type="text"
+           id="searchInput"
+           placeholder="Search event name or venue"
+           style="width:260px" />
+
+    <input type="date"
+           id="dateFilter" />
+
+</div> *@
+
+
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+
+    <!-- LEFT : TITLE -->
+    <h2 class="page-title m-0">
+        Browse Events
+    </h2>
+
+    <!-- RIGHT : SEARCH + DATE -->
+    <div class="d-flex align-items-center gap-2 search-wrapper">
+
+        <input type="text"
+               id="searchInput"
+               placeholder="Search event or venue..."
+               class="form-control search-input" />
+
+        <input type="date"
+               id="dateFilter"
+               class="form-control date-input" />
+
+    </div>
+
+</div>
+
+
+<!-- EVENTS -->
+
+
+<div class="event-grid">
+
+    @foreach (var item in Model)
+    {
+
+        <div class="event-card"
+             data-title="@item.Title.ToLower()"
+             data-venue="@item.Venue.ToLower()"
+             data-date="@item.EventDate.ToString("yyyy-MM-dd")">
+
+            <div class="event-title">
+                @item.Title
+            </div>
+
+            <div class="event-meta">
+                📅 @item.EventDate.ToString("dd MMM yyyy • hh:mm tt")
+            </div>
+
+            <div class="event-meta">
+                📍 @item.Venue
+            </div>
+
+            <div class="capacity">
+                Seats Available: <b>@item.Capacity</b>
+            </div>
+
+            <div class="event-price">
+                ₹@item.Price
+            </div>
+
+            <div class="event-actions">
+
+                <a asp-controller="EventBrowse"
+                   asp-action="Details"
+                   asp-route-id="@item.EventId"
+                   class="btn-details">
+                    Details
+                </a>
+
+                <a asp-controller="Booking"
+                   asp-action="Create"
+                   asp-route-eventId="@item.EventId"
+                   class="btn-book">
+                    Book Ticket
+                </a>
+
+            </div>
+
+        </div>
+
+    }
+
+</div>
+
+
+
+<script>
+
+    /* ELEMENTS */
+
+    const searchInput = document.getElementById("searchInput");
+    const dateFilter = document.getElementById("dateFilter");
+    const cards = document.querySelectorAll(".event-card");
+
+    /* FILTER FUNCTION */
+
+    function filterEvents(){
+
+        let search = searchInput.value.toLowerCase();
+        let date = dateFilter.value;
+
+        cards.forEach(card => {
+
+            let title = card.dataset.title;
+            let venue = card.dataset.venue;
+            let eventDate = card.dataset.date;
+
+            let matchSearch =
+                title.includes(search) ||
+                venue.includes(search);
+
+            let matchDate =
+                !date || eventDate === date;
+
+            if(matchSearch && matchDate){
+                card.style.display = "block";
+            }else{
+                card.style.display = "none";
+            }
+
+        });
+    }
+
+    /* EVENTS */
+
+    searchInput.addEventListener("keyup", filterEvents);
+    dateFilter.addEventListener("change", filterEvents);
+
+</script>

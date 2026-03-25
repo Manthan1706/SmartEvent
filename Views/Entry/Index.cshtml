@@ -1,0 +1,567 @@
+<h2 class="page-title">QR Entry Scanner</h2>
+
+<style>
+
+    body {
+        background: #f4f6fb;
+    }
+
+    /* Title */
+    .page-title {
+        font-weight: 700;
+        margin-bottom: 25px;
+    }
+
+    /* Scanner card */
+    .scanner-card {
+        background: white;
+        border-radius: 14px;
+        padding: 30px;
+        width: 450px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        transition: .3s;
+    }
+
+        .scanner-card:hover {
+            transform: translateY(-4px);
+        }
+
+    /* Scanner frame */
+    #reader {
+        width: 100%;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 2px dashed #6366f1;
+        padding: 10px;
+    }
+
+    /* Upload */
+    .upload-box {
+        margin-top: 20px;
+    }
+
+        .upload-box input {
+            border: 1px solid #ddd;
+            padding: 8px;
+            border-radius: 6px;
+        }
+
+    /* Result */
+    #result {
+        margin-top: 20px;
+        font-size: 15px;
+    }
+
+    .result-success {
+        background: #d4edda;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 5px solid #28a745;
+    }
+
+    .result-error {
+        background: #f8d7da;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 5px solid #dc3545;
+    }
+
+</style>
+
+
+<div class="scanner-card">
+
+    <div id="reader"></div>
+
+    <div id="result"></div>
+
+    <div class="upload-box">
+        <label><b>Scan from Image</b></label><br>
+        <input type="file" id="fileInput" accept="image/*">
+    </div>
+
+</div>
+
+
+
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+<script>
+
+    let scanner;
+    let isProcessing = false;
+
+
+    /* SHOW RESULT */
+    function showResult(html){
+        document.getElementById("result").innerHTML = html;
+    }
+
+
+    /* VALIDATE TICKET */
+    function validateTicket(qrValue){
+
+        if(isProcessing) return;
+
+        isProcessing = true;
+
+        fetch('/Entry/Validate',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({ qrCode: qrValue })
+        })
+        .then(res=>res.json())
+        .then(data=>{
+
+            if(data.success){
+
+                showResult(`
+                    <div class="result-success">
+                        <h4>ENTRY ALLOWED</h4>
+                        <p><b>Event:</b> ${data.eventName}</p>
+                        <p><b>Date:</b> ${data.date}</p>
+                        <p><b>Venue:</b> ${data.venue}</p>
+                    </div>
+                `);
+
+            }else{
+
+                showResult(`
+                    <div class="result-error">
+                        ${data.message}
+                    </div>
+                `);
+
+            }
+
+            setTimeout(()=>{
+                isProcessing = false;
+            },2000);
+
+        })
+        .catch(err=>{
+            console.error(err);
+
+            showResult(`
+                <div class="result-error">
+                    Server error
+                </div>
+            `);
+
+            isProcessing = false;
+        });
+
+    }
+
+
+    /* CAMERA SCANNER */
+    function startScanner(){
+
+        scanner = new Html5Qrcode("reader");
+
+        Html5Qrcode.getCameras().then(devices => {
+
+            if(devices.length){
+
+                scanner.start(
+                    devices[0].id,
+                    {
+                        fps:10,
+                        qrbox:250
+                    },
+                    (decodedText)=>{
+                        console.log("QR:",decodedText);
+                        validateTicket(decodedText);
+                    }
+                );
+
+            }
+
+        });
+
+    }
+
+
+    /* IMAGE SCANNER */
+    document.getElementById("fileInput").addEventListener("change",function(e){
+
+        const file = e.target.files[0];
+
+        if(!file) return;
+
+        const html5QrCode = new Html5Qrcode("reader");
+
+        html5QrCode.scanFile(file,true)
+        .then(decodedText=>{
+
+            console.log("QR:",decodedText);
+
+            validateTicket(decodedText);
+
+        })
+        .catch(err=>{
+            showResult("<div class='result-error'>QR not detected</div>");
+        });
+
+    });
+
+
+    /* START CAMERA */
+    document.addEventListener("DOMContentLoaded",function(){
+        startScanner();
+    });
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@* <h2 class="page-title">QR Entry Scanner</h2>
+
+<style>
+
+    body {
+        background: #f4f6fb;
+    }
+
+    /* Title */
+    .page-title {
+        font-weight: 700;
+        margin-bottom: 25px;
+    }
+
+    /* Scanner card */
+    .scanner-card {
+        background: white;
+        border-radius: 14px;
+        padding: 30px;
+        width: 450px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        transition: .3s;
+    }
+
+        .scanner-card:hover {
+            transform: translateY(-4px);
+        }
+
+    /* Scanner frame */
+    #reader {
+        width: 100%;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 2px dashed #6366f1;
+        padding: 10px;
+    }
+
+    /* Upload area */
+    .upload-box {
+        margin-top: 20px;
+    }
+
+        .upload-box input {
+            border: 1px solid #ddd;
+            padding: 8px;
+            border-radius: 6px;
+        }
+
+    /* Result */
+    #result {
+        margin-top: 20px;
+        font-size: 15px;
+    }
+
+    /* Success result */
+    .result-success {
+        background: #d4edda;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 5px solid #28a745;
+    }
+
+    /* Error result */
+    .result-error {
+        background: #f8d7da;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 5px solid #dc3545;
+    }
+
+    /* Scanner animation */
+    .scanner-card::before {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg,#6366f1,#8b5cf6);
+        top: 0;
+        left: 0;
+    }
+
+</style>
+
+
+<div class="scanner-card">
+
+    <div id="reader"></div>
+
+    <div id="result"></div>
+
+    <div class="upload-box">
+
+        <label><b>Scan from Image</b></label><br>
+
+        <input type="file" id="fileInput" accept="image/*">
+
+    </div>
+
+</div>
+
+
+
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+<script>
+
+    function showResult(html)
+    {
+        document.getElementById("result").innerHTML = html;
+    }
+
+
+    /* VALIDATE TICKET */
+    function validateTicket(qrValue)
+    {
+        fetch('/Entry/Validate', {
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({ qrCode: qrValue })
+        })
+        .then(response=>{
+
+            if(!response.ok)
+            {
+                throw new Error("Server error");
+            }
+
+            return response.json();
+        })
+        .then(data=>{
+
+            if(data.success)
+            {
+                showResult(`
+                    <div class="result-success">
+                        <h4>ENTRY ALLOWED</h4>
+                        <p><b>Event:</b> ${data.eventName}</p>
+                        <p><b>Date:</b> ${data.date}</p>
+                        <p><b>Venue:</b> ${data.venue}</p>
+                    </div>
+                `);
+            }
+            else
+            {
+                showResult(`
+                    <div class="result-error">
+                        ${data.message}
+                    </div>
+                `);
+            }
+
+        })
+        .catch(error=>{
+
+            console.error(error);
+
+            showResult(`
+                <div class="result-error">
+                    Server Error or Invalid Response
+                </div>
+            `);
+
+        });
+    }
+
+
+    /* QR CAMERA SCANNER */
+    function onScanSuccess(decodedText)
+    {
+        console.log("QR:",decodedText);
+
+        validateTicket(decodedText);
+    }
+
+    const scanner = new Html5QrcodeScanner(
+        "reader",
+        {
+            fps:10,
+            qrbox:250
+        }
+    );
+
+    scanner.render(onScanSuccess);
+
+
+    
+    /* IMAGE SCANNER */
+
+    document.getElementById("fileInput").addEventListener("change",function(e){
+
+        const file = e.target.files[0];
+
+        if(!file) return;
+
+        const html5QrCode = new Html5Qrcode("reader");
+
+        html5QrCode.scanFile(file,true)
+        .then(decodedText=>{
+
+            validateTicket(decodedText);
+
+        })
+        .catch(err=>{
+
+            showResult("<div class='result-error'>QR not detected</div>");
+
+        });
+
+    });
+
+</script> *@
+
+
+
+
+
+
+
+
+
+
+
+
+@* <h2>QR Entry Scanner</h2>
+
+<div id="reader" style="width:400px;"></div>
+
+<div id="result" class="mt-3"></div>
+
+<input type="file" id="fileInput" accept="image/*"> *@
+
+@* <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script> *@
+
+@* <script>
+
+    function showResult(html)
+    {
+        document.getElementById("result").innerHTML = html;
+    }
+
+    /* STEP 2 IMPLEMENTED HERE */
+    function validateTicket(qrValue)
+    {
+        fetch('/Entry/Validate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ qrCode: qrValue })
+        })
+        .then(response => {
+
+            /* if server crashes */
+            if (!response.ok)
+            {
+                throw new Error("Server error");
+            }
+
+            return response.json();
+        })
+        .then(data => {
+
+            if(data.success)
+            {
+                showResult(`
+                    <div style="background:#d4edda;padding:15px;border-radius:6px">
+                        <h4>ENTRY ALLOWED</h4>
+                        <p><b>Event:</b> ${data.eventName}</p>
+                        <p><b>Date:</b> ${data.date}</p>
+                        <p><b>Venue:</b> ${data.venue}</p>
+                    </div>
+                `);
+            }
+            else
+            {
+                showResult(`<div style="color:red">${data.message}</div>`);
+            }
+
+        })
+        .catch(error => {
+
+            console.error(error);
+
+            showResult(`
+                <div style="color:red">
+                    Server Error or Invalid Response
+                </div>
+            `);
+        });
+    }
+
+
+    /* QR SCANNER */
+    function onScanSuccess(decodedText)
+    {
+        console.log("QR:", decodedText);
+
+        validateTicket(decodedText);
+    }
+
+    const scanner = new Html5QrcodeScanner(
+        "reader",
+        {
+            fps:10,
+            qrbox:250
+        }
+    );
+
+    scanner.render(onScanSuccess);
+
+
+    /* IMAGE QR SCAN */
+    document.getElementById("fileInput").addEventListener("change",function(e){
+
+        const file = e.target.files[0];
+
+        if(!file) return;
+
+        const html5QrCode = new Html5Qrcode("reader");
+
+        html5QrCode.scanFile(file,true)
+        .then(decodedText => {
+
+            validateTicket(decodedText);
+
+        })
+        .catch(err => {
+
+            showResult("<div style='color:red'>QR not detected</div>");
+
+        });
+
+    });
+
+</script> *@

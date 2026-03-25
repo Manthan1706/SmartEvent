@@ -1,0 +1,57 @@
+﻿@model IEnumerable<SmartEvent.Web.Models.Event>
+
+<h2>Pending Events</h2>
+
+<table class="table table-bordered">
+
+	<thead>
+		<tr>
+			<th>Title</th>
+			<th>Date</th>
+			<th>Venue</th>
+			<th>Status</th>
+			<th>Action</th>
+		</tr>
+	</thead>
+
+	<tbody>
+
+		@foreach (var item in Model)
+		{
+			<tr>
+
+				<td>@item.Title</td>
+
+				<td>@item.EventDate.ToString("dd-MM-yyyy")</td>
+
+				<td>@item.Venue</td>
+
+				<td>
+					<span class="badge bg-warning text-dark">Pending</span>
+				</td>
+
+				<td>
+
+					<a asp-controller="AdminDashboard"
+					   asp-action="ChangeStatus"
+					   asp-route-id="@item.EventId"
+					   asp-route-status="Active"
+					   class="btn btn-success btn-sm">
+						Approve
+					</a>
+
+					<a asp-controller="AdminDashboard"
+					   asp-action="Delete"
+					   asp-route-id="@item.EventId"
+					   class="btn btn-danger btn-sm">
+						Delete
+					</a>
+
+				</td>
+
+			</tr>
+		}
+
+	</tbody>
+
+</table>

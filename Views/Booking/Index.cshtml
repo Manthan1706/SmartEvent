@@ -1,0 +1,147 @@
+@model IEnumerable<SmartEvent.Web.Models.Booking>
+
+@{
+    ViewData["Title"] = "My Bookings";
+}
+
+<style>
+
+    body {
+        background: #f4f6fb;
+    }
+
+    /* Page Title */
+    .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    /* Main container */
+    .booking-container {
+        background: white;
+        border-radius: 14px;
+        padding: 25px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        border: 1px solid #e5e7eb;
+    }
+
+    /* Table */
+    .booking-table {
+        width: 100%;
+    }
+
+        .booking-table thead {
+            background: #f1f5f9;
+        }
+
+        .booking-table th {
+            font-weight: 600;
+            padding: 12px;
+        }
+
+        .booking-table td {
+            padding: 14px 12px;
+            vertical-align: middle;
+        }
+
+        /* Row hover */
+        .booking-table tbody tr {
+            transition: .2s;
+        }
+
+            .booking-table tbody tr:hover {
+                background: #f9fafb;
+            }
+
+    /* Status badge */
+    .status-confirmed {
+        background: #dcfce7;
+        color: #15803d;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    /* Price */
+    .price {
+        font-weight: 600;
+        color: #16a34a;
+    }
+
+    /* Event title */
+    .event-name {
+        font-weight: 600;
+    }
+
+</style>
+
+
+
+<h2 class="page-title">My Bookings</h2>
+
+<div class="booking-container">
+
+    <table class="table booking-table">
+
+        <thead>
+            <tr>
+                <th>Event</th>
+                <th>Tickets</th>
+                <th>Status</th>
+                <th>Booking Date</th>
+                <th>Total Price</th>
+                @* <th>Action</th>  *@
+
+            </tr>
+        </thead>
+
+        <tbody>
+
+            @foreach (var booking in Model)
+            {
+                var used = booking.BookingTickets.Any(t => t.IsUsed);
+
+                <tr>
+
+                    <td class="event-name">
+                        @booking.Event.Title
+                    </td>
+
+                    <td>
+                        @booking.Quantity
+                    </td>
+
+                    <td>
+                        <span class="status-confirmed">
+                            @booking.Status
+                        </span>
+                    </td>
+
+                    <td>
+                        @booking.BookingDate.ToString("dd MMM yyyy • hh:mm tt")
+                    </td>
+
+                    <td class="price">
+                        ₹@booking.TotalPrice
+                    </td>
+
+                    @* <td>
+                        <form asp-controller="Booking" asp-action="Delete" method="post">
+                            <input type="hidden" name="bookingId" value="@booking.BookingId" />
+
+                            <button class="btn btn-danger btn-sm">
+                                Delete
+                            </button>
+                        </form>
+                    </td> *@
+
+                </tr>
+            }
+
+        </tbody>
+
+    </table>
+
+</div>

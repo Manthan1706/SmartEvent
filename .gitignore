@@ -1,0 +1,19 @@
+# Build folders
+bin/
+obj/
+
+# Visual Studio
+.vs/
+
+# Node
+node_modules/
+
+# Config (sensitive)
+appsettings.Development.json
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,247 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - Smart Event</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <!-- Animations -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <!-- Icons -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+          <style>
+                  .navbar{
+                    padding:14px 0;
+                  }
+
+                .navbar-brand{
+                    font-size:20px;
+                }
+                                                                                                                                                
+                .nav-link{
+                    font-weight:500;
+                    margin-right:8px;
+                }                                                                                                                   
+          </style>
+</head>                                                                                                                                                                                                                                 
+
+
+<body>
+
+    <header>
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm sticky-top">
+
+            <div class="container">
+
+                <a class="navbar-brand fw-bold"
+                   asp-controller="Home"
+                   asp-action="Index">
+
+                    🎟 SmartEvent
+
+                </a>
+
+
+                <button class="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#navbarMain">
+
+                    <span class="navbar-toggler-icon"></span>
+
+                </button>
+
+
+                <div class="collapse navbar-collapse" id="navbarMain">
+
+                    <ul class="navbar-nav me-auto">
+
+                        <li class="nav-item">
+
+                            <a class="nav-link"
+                               asp-controller="Home"
+                               asp-action="Index">
+
+                                Home
+
+                            </a>
+
+                        </li>
+
+
+                        <!-- USER MENU -->
+                        @if (User.IsInRole("User"))
+                        {
+
+                            <li class="nav-item">
+
+                                <a class="nav-link"
+                                   asp-controller="EventBrowse"
+                                   asp-action="Index">
+
+                                    Browse Events
+
+                                </a>
+
+                            </li>
+
+                            <li class="nav-item">
+
+                                <a class="nav-link"
+                                   asp-controller="Booking"
+                                   asp-action="Index">
+
+                                    My Bookings
+
+                                </a>
+
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Booking" asp-action="MyTickets">
+                                    My Tickets
+                                </a>
+                            </li>
+
+                        }
+
+
+                        <!-- ORGANIZER MENU -->
+                        @if (User.IsInRole("Organizer"))
+                        {
+
+                            <li class="nav-item">
+
+                                <a class="nav-link"
+                                   asp-controller="Event"
+                                   asp-action="Create">
+
+                                    Create Event
+
+                                </a>
+
+                            </li>
+
+                            <li class="nav-item">
+
+                                <a class="nav-link"
+                                   asp-controller="Event"
+                                   asp-action="Index">
+
+                                    My Events
+
+                                </a>
+
+                            </li>
+
+                        }
+
+
+                        <!-- ADMIN MENU -->
+                        @if (User.IsInRole("Admin"))
+                        {
+
+                            <li class="nav-item">
+
+                                <a class="nav-link"
+                                   asp-controller="AdminDashboard"
+                                   asp-action="Index">
+
+                                    Admin Dashboard
+
+                                </a>
+
+                            </li>
+
+                            <li class="nav-item">
+
+                                <a class="nav-link"
+                                   asp-controller="AdminDashboard"
+                                   asp-action="PendingEvents">
+
+                                    Pending Events
+
+                                </a>
+
+                            </li>
+
+                        }
+
+
+                        <!-- ENTRY MENU -->
+                        @if (User.IsInRole("Organizer"))
+                        {
+
+                            <li class="nav-item">
+
+                                <a class="nav-link"
+                                   asp-controller="Entry"
+                                   asp-action="Index">
+
+                                    QR Entry
+
+                                </a>
+
+                            </li>
+
+                        }
+
+                    </ul>
+
+
+                    <!-- LOGIN / LOGOUT -->
+                    <partial name="_LoginPartial" />
+
+                </div>
+
+            </div>
+
+        </nav>
+
+    </header>
+
+
+    <div class="container mt-4">
+
+        <main role="main">
+
+            @RenderBody()
+
+        </main>
+
+    </div>
+
+
+    <footer class="border-top footer text-muted mt-5">
+
+        <div class="container text-center">
+
+            © 2026 SmartEvent • Event Ticket Platform
+
+        </div>
+
+    </footer>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+
+</html>

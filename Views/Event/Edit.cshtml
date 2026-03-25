@@ -1,0 +1,245 @@
+@model SmartEvent.Web.Models.Event
+
+@{
+    ViewData["Title"] = "Edit Event";
+}
+
+<style>
+
+    body {
+        background: #f4f6fb;
+    }
+
+    /* Page title */
+    .page-title {
+        font-weight: 700;
+        margin-bottom: 25px;
+    }
+
+    /* Card */
+    .form-card {
+        background: white;
+        border-radius: 14px;
+        padding: 35px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        transition: .3s;
+    }
+
+        .form-card:hover {
+            transform: translateY(-4px);
+        }
+
+    /* Inputs */
+    .form-control {
+        border-radius: 8px;
+        padding: 10px;
+        transition: .2s;
+    }
+
+        .form-control:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 0.2rem rgba(99,102,241,.2);
+        }
+
+    /* Labels */
+    .form-label {
+        font-weight: 600;
+    }
+
+    /* Save button */
+    .btn-save {
+        background: linear-gradient(135deg,#6366f1,#8b5cf6);
+        border: none;
+        padding: 10px 22px;
+        border-radius: 8px;
+        color: white;
+        font-weight: 600;
+        transition: .3s;
+    }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99,102,241,.4);
+        }
+
+    /* Back link */
+    .back-link {
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+</style>
+
+
+<h2 class="page-title">Edit Event</h2>
+
+<div class="row">
+
+    <div class="col-md-7">
+
+        <div class="form-card">
+
+            <form asp-action="Edit">
+
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <input type="hidden" asp-for="EventId" />
+                <input type="hidden" asp-for="OrganizerId" />
+                <input type="hidden" asp-for="Status" />
+
+                <div class="mb-3">
+
+                    <label asp-for="Title" class="form-label"></label>
+
+                    <input asp-for="Title" class="form-control" placeholder="Enter Event Title" />
+
+                    <span asp-validation-for="Title" class="text-danger"></span>
+
+                </div>
+
+
+
+                <div class="mb-3">
+
+                    <label asp-for="EventDate" class="form-label"></label>
+
+                    <input asp-for="EventDate" type="datetime-local" class="form-control" />
+
+                    <span asp-validation-for="EventDate" class="text-danger"></span>
+
+                </div>
+
+
+
+                <div class="mb-3">
+
+                    <label asp-for="Venue" class="form-label"></label>
+
+                    <input asp-for="Venue" class="form-control" placeholder="Enter Venue" />
+
+                    <span asp-validation-for="Venue" class="text-danger"></span>
+
+                </div>
+
+
+
+                <div class="mb-3">
+
+                    <label asp-for="Capacity" class="form-label"></label>
+
+                    <input asp-for="Capacity" type="number" class="form-control" placeholder="Enter Capacity" />
+
+                    <span asp-validation-for="Capacity" class="text-danger"></span>
+
+                </div>
+
+
+
+                <div class="mb-4">
+
+                    <label class="form-label">Ticket Price</label>
+
+                    <input asp-for="Price" class="form-control" placeholder="Enter Ticket Price" />
+
+                    <span asp-validation-for="Price" class="text-danger"></span>
+
+                </div>
+
+
+
+                <button type="submit" class="btn-save">
+
+                    Save Changes
+
+                </button>
+
+            </form>
+
+        </div>
+
+        <br>
+
+        <a asp-action="Index" class="back-link">
+
+            ← Back to My Events
+
+        </a>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+
+
+
+@* @model SmartEvent.Web.Models.Event
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Event</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="EventId" />
+            <input type="hidden" asp-for="OrganizerId" />
+            <input type="hidden" asp-for="Status" />
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EventDate" class="control-label"></label>
+                <input asp-for="EventDate" class="form-control" />
+                <span asp-validation-for="EventDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Venue" class="control-label"></label>
+                <input asp-for="Venue" class="form-control" />
+                <span asp-validation-for="Venue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Capacity" class="control-label"></label>
+                <input asp-for="Capacity" class="form-control" />
+                <span asp-validation-for="Capacity" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Status" class="control-label"></label>
+                <input asp-for="Status" class="form-control" />
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label>Ticket Price</label>
+                <input asp-for="Price" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} *@

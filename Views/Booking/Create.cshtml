@@ -1,0 +1,277 @@
+@{
+    var ev = ViewBag.Event as SmartEvent.Web.Models.Event;
+}
+
+<style>
+
+    body {
+        background: #f4f6fb;
+    }
+
+    /* Page title */
+    .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    /* Main booking card */
+    .booking-card {
+        background: white;
+        border-radius: 14px;
+        padding: 28px;
+        max-width: 550px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        transition: .25s;
+    }
+
+        .booking-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 30px rgba(0,0,0,0.12);
+        }
+
+    /* Event title */
+    .event-title {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 12px;
+    }
+
+    /* Event meta */
+    .event-meta {
+        font-size: 15px;
+        color: #6b7280;
+        margin-bottom: 6px;
+    }
+
+    /* Price highlight */
+    .ticket-price {
+        font-size: 20px;
+        font-weight: 700;
+        color: #16a34a;
+        margin-top: 10px;
+    }
+
+    /* Form section */
+    .form-section {
+        margin-top: 22px;
+    }
+
+    /* Quantity input */
+    .qty-input {
+        max-width: 140px;
+    }
+
+    /* Total price */
+    .total-price {
+        font-size: 18px;
+        font-weight: 600;
+        margin-top: 12px;
+    }
+
+    /* Buttons */
+    .action-buttons {
+        margin-top: 18px;
+    }
+
+        .action-buttons button,
+        .action-buttons a {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            margin-right: 8px;
+            transition: .2s;
+        }
+
+    /* Confirm */
+    .btn-confirm {
+        background: #16a34a;
+        color: white;
+        border: none;
+    }
+
+        .btn-confirm:hover {
+            box-shadow: 0 6px 14px rgba(22,163,74,.35);
+        }
+
+    /* Back */
+    .btn-back {
+        background: #6b7280;
+        color: white;
+    }
+
+        .btn-back:hover {
+            box-shadow: 0 6px 14px rgba(107,114,128,.35);
+        }
+
+</style>
+
+
+
+<h2 class="page-title">Book Ticket</h2>
+
+<div class="booking-card">
+
+    <div class="event-title">
+        @ev.Title
+    </div>
+
+    <div class="event-meta">
+        📅 @ev.EventDate.ToString("dd MMM yyyy • hh:mm tt")
+    </div>
+
+    <div class="event-meta">
+        📍 @ev.Venue
+    </div>
+
+    <div class="event-meta">
+        👥 Available Seats: <b>@ev.Capacity</b>
+    </div>
+
+    <div class="ticket-price">
+        ₹@ViewBag.Event.Price per ticket
+    </div>
+
+
+    <form asp-action="Create" method="post" onsubmit="return false">
+
+        <input type="hidden" name="eventId" value="@ev.EventId" />
+
+        <div class="form-section">
+
+            <label class="form-label">Quantity</label>
+
+            <input id="qty"
+                   type="number"
+                   name="quantity"
+                   class="form-control qty-input"
+                   min="1"
+                   max="3"
+                   value="1"
+                   required />
+
+            <div class="total-price">
+                Total Price : ₹<span id="total">@ViewBag.Event.Price</span>
+            </div>
+
+            <button type="button" class="btn btn-success w-100 mt-3"
+                        onclick="payNow()">
+
+                    Proceed to Payment
+
+                </button>
+
+        </div>
+
+
+        
+
+    </form>
+
+</div>
+
+
+<script>
+
+    var price = @ViewBag.Event.Price;
+
+        document.getElementById("qty").addEventListener("input", function(){
+
+        var qty = parseInt(this.value);
+
+        if(qty < 1){
+            qty = 1;
+        }
+
+        if(qty > 3){
+            qty = 3;
+            alert("Maximum 3 tickets allowed per user.");
+        }
+
+        this.value = qty;
+
+        var total = qty * price;
+
+        document.getElementById("total").innerText = total;
+
+    });
+
+
+        function payNow(){
+
+    var qty = document.getElementById("qty").value;
+
+    fetch('/Booking/CreateCheckoutSession',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+    eventId:@ev.EventId,
+    quantity:qty
+    })
+    })
+    .then(res=>{
+    if(!res.ok){
+    return res.text().then(err=>{ throw new Error(err); });
+    }
+    return res.json();
+    })
+    .then(data=>{
+    window.location = data.url;
+    })
+    .catch(err=>{
+    alert(err.message);
+    });
+
+    }
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+@* <div class="action-buttons">
+
+            <div class="card shadow p-4">
+
+                <h4>Payment Summary</h4>
+
+                <hr>
+
+                <p><b>Event :</b> @ev.Title</p>
+
+                <p><b>Ticket Price :</b> ₹@ev.Price</p>
+
+                <p><b>Quantity :</b> <span id="qty">1</span></p>
+
+
+                <div class="total-price">
+                    Total Price : ₹<span id="total">@ViewBag.Event.Price</span>
+                </div>
+
+                <button type="button" class="btn btn-success w-100 mt-3"
+                        onclick="payNow()">
+
+                    Proceed to Payment
+
+                </button>
+
+            </div>
+
+            <a asp-controller="EventBrowse"
+               asp-action="Index"
+               class="btn-back">
+                Back
+            </a>
+
+        </div> *@

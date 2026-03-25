@@ -1,0 +1,40 @@
+﻿@model IEnumerable<SmartEvent.Web.Models.Event>
+
+@{
+    ViewData["Title"] = "My Events";
+}
+
+<h2>My Events</h2>
+
+<table class="table table-bordered">
+
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Venue</th>
+            <th>Date</th>
+            <th>Capacity</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Title</td>
+                <td>@item.Venue</td>
+                <td>@item.EventDate.ToString("dd MMM yyyy hh:mm tt")</td>
+                <td>@item.Capacity</td>
+                <td>@item.Status</td>
+            </tr>
+        }
+
+    </tbody>
+
+</table>
+
+<a asp-action="Create" class="btn btn-primary">
+    Create New Event
+</a>

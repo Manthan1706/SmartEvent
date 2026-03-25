@@ -1,0 +1,101 @@
+﻿@model IEnumerable<SmartEvent.Web.Models.Event>
+
+<h2>Admin Dashboard</h2>
+
+<div class="row mb-4">
+
+    <div class="col-md-4">
+        <div class="card p-3">
+            <h5>Total Events</h5>
+            <h3>@ViewBag.TotalEvents</h3>
+        </div>
+    </div>
+
+</div>
+
+<h3>Event Management</h3>
+
+<table class="table table-bordered">
+
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Date</th>
+            <th>Venue</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+
+                <td>@item.Title</td>
+
+                <td>@item.EventDate.ToString("dd-MM-yyyy")</td>
+
+                <td>@item.Venue</td>
+
+                <td>
+
+                    @if (item.Status == "Pending")
+                    {
+                        <span class="badge bg-warning text-dark">Pending</span>
+                    }
+
+                    @if (item.Status == "Active")
+                    {
+                        <span class="badge bg-success">Active</span>
+                    }
+
+                    @if (item.Status == "Cancelled")
+                    {
+                        <span class="badge bg-danger">Cancelled</span>
+                    }
+
+                </td>
+
+                <td>
+
+                    @* <a asp-controller="AdminDashboard"
+                       asp-action="ChangeStatus"
+                       asp-route-id="@item.EventId"
+                       asp-route-status="Active"
+                       class="btn btn-success btn-sm">
+                        Activate
+                    </a> *@
+
+                    <a asp-controller="AdminDashboard"
+                       asp-action="ChangeStatus"
+                       asp-route-id="@item.EventId"
+                       asp-route-status="Pending"
+                       class="btn btn-warning btn-sm">
+                        Pending
+                    </a>
+
+                    <a asp-controller="AdminDashboard"
+                       asp-action="ChangeStatus"
+                       asp-route-id="@item.EventId"
+                       asp-route-status="Cancelled"
+                       class="btn btn-secondary btn-sm">
+                        Cancel
+                    </a>
+
+                    <a asp-controller="AdminDashboard"
+                       asp-action="Delete"
+                       asp-route-id="@item.EventId"
+                       class="btn btn-danger btn-sm">
+                        Delete
+                    </a>
+
+                </td>
+
+            </tr>
+        }
+
+    </tbody>
+
+</table>

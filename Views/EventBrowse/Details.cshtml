@@ -1,0 +1,187 @@
+﻿@model SmartEvent.Web.Models.Event
+
+@{
+    ViewData["Title"] = "Event Details";
+}
+
+<style>
+
+    body {
+        background: #f4f6fb;
+    }
+
+    /* Title */
+    .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 25px;
+    }
+
+    /* Card */
+    .event-card {
+        background: white;
+        border-radius: 14px;
+        padding: 28px;
+        max-width: 520px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        transition: .25s;
+    }
+
+        .event-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 30px rgba(0,0,0,0.12);
+        }
+
+    /* Title inside card */
+    .event-title {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    /* Meta */
+    .event-meta {
+        font-size: 15px;
+        color: #6b7280;
+        margin-bottom: 6px;
+    }
+
+    /* Price */
+    .event-price {
+        font-size: 20px;
+        font-weight: 700;
+        color: #16a34a;
+        margin-top: 12px;
+    }
+
+    /* Buttons */
+    .event-actions {
+        margin-top: 20px;
+    }
+
+        .event-actions a {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            margin-right: 10px;
+            transition: .2s;
+        }
+
+    /* Book button */
+    .btn-book {
+        background: #16a34a;
+        color: white;
+    }
+
+        .btn-book:hover {
+            box-shadow: 0 6px 14px rgba(22,163,74,.35);
+        }
+
+    /* Back button */
+    .btn-back {
+        background: #6b7280;
+        color: white;
+    }
+
+        .btn-back:hover {
+            box-shadow: 0 6px 14px rgba(107,114,128,.35);
+        }
+</style>
+
+
+
+<h2 class="page-title">Event Details</h2>
+
+<div class="event-card">
+
+    <div class="event-title">
+        @Model.Title
+    </div>
+
+    <div class="event-meta">
+        📅 @Model.EventDate.ToString("dd MMM yyyy • hh:mm tt")
+    </div>
+
+    <div class="event-meta">
+        📍 @Model.Venue
+    </div>
+
+    <div class="event-meta">
+        👥 Capacity: <b>@Model.Capacity</b>
+    </div>
+
+    <div class="event-meta">
+        📌 Status: <b>@Model.Status</b>
+    </div>
+
+    <div class="event-price">
+        ₹@Model.Price
+    </div>
+
+    <div class="event-actions">
+
+        <a asp-controller="Booking"
+           asp-action="Create"
+           asp-route-eventId="@Model.EventId"
+           class="btn-book">
+            Book Ticket
+        </a>
+
+        <a asp-action="Index"
+           class="btn-back">
+            Back
+        </a>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+@* @model SmartEvent.Web.Models.Event
+
+@{
+    ViewData["Title"] = "Event Details";
+}
+
+<h2>Event Details</h2>
+
+<div class="card p-3">
+
+    <h4>@Model.Title</h4>
+
+    <p><strong>Date:</strong> @Model.EventDate.ToString("dd-MM-yyyy hh:mm tt")</p>
+
+    <p><strong>Venue:</strong> @Model.Venue</p>
+
+    <p><strong>Capacity:</strong> @Model.Capacity</p>
+
+    <p><strong>Status:</strong> @Model.Status</p>
+
+    <p><strong>Price:</strong> @Model.Price</p>
+
+</div>
+
+<br />
+
+<a asp-controller="Booking"
+   asp-action="Create"
+   asp-route-eventId="@Model.EventId"
+   class="btn btn-success">
+    Book Ticket
+</a>
+
+<a asp-action="Index" class="btn btn-secondary">
+    Back
+</a> *@
